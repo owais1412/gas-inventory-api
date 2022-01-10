@@ -1,17 +1,36 @@
 const express = require("express");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 const cache = require("memory-cache");
 
-if (process.env.DEV == true) {
+if (process.env.DEV == 'true') {
+  console.log("DEV MODE");
   require("dotenv").config();
 }
+
 const routes = require("./routes/routes");
 const app = express();
+const HTTP_PORT = process.env.PORT || 8000;
 
-const HTTP_PORT = process.env.PORT || 8000
-app.listen(HTTP_PORT, '0.0.0.0', () => {
-    console.log("Server is listening on port " + HTTP_PORT);
-});
+const swagger_options = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+          title: "Gas Inventory API",
+          version: "1.0.0",
+          description: "A simple Gas Emission Inventory API",
+      },
+      servers: [{
+            url: "https://gas-inventory-api.herokuapp.com/",
+      }],
+    },
+    apis: ["./routes/*.js"],
+};
 
+const swagger_specs = swaggerJsDoc(swagger_options);
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swagger_specs));
+app.use('/', routes);
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -44,4 +63,7 @@ const cacheMiddleware = (duration) => {
 
 app.use(cacheMiddleware(60));
 
-app.use('/', routes);
+
+app.listen(HTTP_PORT, '0.0.0.0', () => {
+    console.log("Server is listening on port " + HTTP_PORT);
+});
