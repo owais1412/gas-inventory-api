@@ -14,7 +14,7 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 
 // Get all countries
 // Returns an array of objects
-db.getCountries = function () {
+db.getCountries = () => {
     return new Promise((resolve, reject) => {
         db.all(`SELECT i.id, cnt.country, cnt.id as country_id, i.year, i.value, c.category FROM inventory i, countries cnt, category c where i.category_id=c.id AND cnt.id=i.country_id`, (err, rows) => {
             if (err) {
@@ -28,7 +28,7 @@ db.getCountries = function () {
 
 // Get country by id
 // Returns an array of objects
-db.getCountry = function (id, queries) {
+db.getCountry = (id, queries) => {
   return new Promise((resolve, reject) => {
     let query_string = `SELECT i.id, cnt.country,  cnt.id as country_id, i.year, i.value, c.category FROM inventory i, countries cnt, category c where i.category_id=c.id AND cnt.id=i.country_id AND cnt.id=?`;
 

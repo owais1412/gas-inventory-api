@@ -35,6 +35,11 @@ router.get('/country/:id', (req, res) => {
 
     db.getCountry(id, queries)
       .then(country_data => {
+        if (country_data.length == 0) {
+          res.status(404).json({ error: 'Country not found' });
+          return;
+        }
+
         const country = country_data.reduce((acc, curr) => {
           if (!acc[curr.year]) {
             acc[curr.year] = {}
@@ -43,7 +48,7 @@ router.get('/country/:id', (req, res) => {
             "value": curr.value
           };
           return acc;
-        }, {'name': country_data[0]?.country});
+        }, {'name': country_data[0].country});
         res.status(200).json(country);
       })
     .catch(err => {
