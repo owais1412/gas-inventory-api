@@ -13,18 +13,18 @@ const app = express();
 const HTTP_PORT = process.env.PORT || 8000;
 
 const swagger_options = {
-    definition: {
-      openapi: "3.0.0",
-      info: {
-          title: "Gas Inventory API",
-          version: "1.0.0",
-          description: "A simple Gas Emission Inventory API",
-      },
-      servers: [{
-            url: "https://gas-inventory-api.herokuapp.com/",
-      }],
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Gas Inventory API",
+      version: "1.0.0",
+      description: "A simple Gas Emission Inventory API",
     },
-    apis: ["./routes/*.js"],
+    servers: [{
+      url: "https://gas-inventory-api.herokuapp.com/",
+    }],
+  },
+  apis: ["./routes/*.js"],
 };
 
 const swagger_specs = swaggerJsDoc(swagger_options);
@@ -46,11 +46,11 @@ const cacheMiddleware = (duration) => {
     return (req, res, next) => {
         let key =  '__express__' + req.originalUrl || req.url;
         let cacheContent = memCache.get(key);
-        if(cacheContent){
+        if (cacheContent) {
             console.log("Cache hit for " + key);
             res.send(cacheContent);
             return;
-        }else{
+        } else {
             res.sendResponse = res.send;
             res.send = (body) => {
                 memCache.put(key, body, duration * 1000);
