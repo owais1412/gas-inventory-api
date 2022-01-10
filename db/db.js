@@ -28,9 +28,26 @@ db.getCountries = function () {
 
 // Get country by id
 // Returns an array of objects
-db.getCountry = function (id) {
+db.getCountry = function (id, queries) {
   return new Promise((resolve, reject) => {
-    db.all(`SELECT i.id, cnt.country,  cnt.id as country_id, i.year, i.value, c.category FROM inventory i, countries cnt, category c where i.category_id=c.id AND cnt.id=i.country_id AND cnt.id=?`, id, (err, row) => {
+    let query_string = `SELECT i.id, cnt.country,  cnt.id as country_id, i.year, i.value, c.category FROM inventory i, countries cnt, category c where i.category_id=c.id AND cnt.id=i.country_id AND cnt.id=?`;
+
+    if (queries.startYear) {
+      query_string += ` AND i.year >= ${queries.startYear}`;
+    }
+    if (queries.endYear) {
+      query_string += ` AND i.year <= ${queries.endYear}`;
+    }
+    if (queries.categories) {
+      let category_string = '';
+      queries.categories.forEach((category) => {
+        category_string += `'${category}',`;
+      });
+      category_string = category_string.slice(0, -1);
+      query_string += ` AND c.category IN (${category_string})`;
+    }
+
+    db.all(query_string, id, (err, row) => {
       if (err) {
         reject(err);
       } else {

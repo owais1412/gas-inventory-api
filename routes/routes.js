@@ -29,7 +29,11 @@ router.get("/countries", (req, res) => {
 
 router.get('/country/:id', (req, res) => {
     const id = req.params.id;
-    db.getCountry(id)
+    const queries = req.query;
+
+    queries.categories = queries.categories?.split(',');
+
+    db.getCountry(id, queries)
       .then(country_data => {
         const country = country_data.reduce((acc, curr) => {
           if (!acc[curr.year]) {
