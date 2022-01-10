@@ -12,6 +12,15 @@ app.listen(HTTP_PORT, '0.0.0.0', () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
 
+app.use(express.json());
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.contentType('application/json');
+  next();
+});
+
 // set up using cache middleware for 10 minutes
 const memCache = new cache.Cache();
 const cacheMiddleware = (duration) => {
@@ -34,7 +43,5 @@ const cacheMiddleware = (duration) => {
 }
 
 app.use(cacheMiddleware(60));
-
-app.use(express.json());
 
 app.use('/', routes);
