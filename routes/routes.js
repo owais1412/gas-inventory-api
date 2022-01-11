@@ -96,7 +96,7 @@ router.get('/country/:id', (req, res) => {
     db.getCountry(id, queries)
       .then(country_data => {
         if (country_data.length == 0) {
-          res.status(404).json({ error: 'Country not found' });
+          res.status(404).json({ error: 'Incorrect countryid/year/category' });
           return;
         }
 
