@@ -10,13 +10,19 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
     console.log("Connected to database");
 });
 
+// store get countries string in a const variable
+// to avoid typos
+const GET_COUNTRIES_SQL = `SELECT i.id, cnt.country, cnt.id as country_id, i.year,` +
+  ` i.value, c.category FROM inventory i, countries cnt, category c where` +
+  ` i.category_id=c.id AND cnt.id=i.country_id`;
+
 // Custom methods
 
 // Get all countries
 // Returns an array of objects
 db.getCountries = () => {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT i.id, cnt.country, cnt.id as country_id, i.year, i.value, c.category FROM inventory i, countries cnt, category c where i.category_id=c.id AND cnt.id=i.country_id`, (err, rows) => {
+        db.all(GET_COUNTRIES_SQL, (err, rows) => {
             if (err) {
                 reject(err);
             } else {
@@ -30,7 +36,7 @@ db.getCountries = () => {
 // Returns an array of objects
 db.getCountry = (id, queries) => {
   return new Promise((resolve, reject) => {
-    let query_string = `SELECT i.id, cnt.country,  cnt.id as country_id, i.year, i.value, c.category FROM inventory i, countries cnt, category c where i.category_id=c.id AND cnt.id=i.country_id AND cnt.id=?`;
+    let query_string = GET_COUNTRIES_SQL + ` AND cnt.id=?`;
 
     if (queries.startYear) {
       query_string += ` AND i.year >= ${queries.startYear}`;
