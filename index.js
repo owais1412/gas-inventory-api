@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// set up using cache middleware for 10 minutes
+// set up using cache middleware for 1 minute
 const memCache = new cache.Cache();
 const cacheMiddleware = (duration) => {
     return (req, res, next) => {
